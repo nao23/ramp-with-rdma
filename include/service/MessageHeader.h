@@ -11,6 +11,9 @@ public:
     size_t body_size;
     int is_arrived; // only used by RDMA Write
     
-    MessageHeader() = default;
+    MessageHeader() {
+	is_arrived = 0xffffffff;
+    }
+
     MessageHeader(MessageType req_type, size_t body_size);
 };

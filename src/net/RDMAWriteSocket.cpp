@@ -61,6 +61,7 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 
     this->rsock->post_read(read_buf, rka);
     
+    printf("read invalid flag + MessageHeader..."); fflush(stdout);
     // read invalid flag + MessageHeader
     int is_invalid;
     MessageHeader header;
@@ -71,21 +72,24 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 	    break;
 	}
     }
-    
+    printf("done\n"); fflush(stdout);
+
     if (is_invalid != 0) {
 	return -1;
     }
     
+    printf("read body + is_arrived flag..."); fflush(stdout);
     // read body + is_arrived flag
-    char* body;
     is_arrived = (int*)(read_buf.addr + sizeof(int) + sizeof(MessageHeader) + header.body_size);
     while (true) {
 	if (*is_arrived != 0) {
-	    body = read_buf.addr + sizeof(int) + sizeof(MessageHeader);
 	    break;
 	}
     }
-    
+    printf("done\n"); fflush(stdout);
+
+    char* body = read_buf.addr + sizeof(int) + sizeof(MessageHeader);
+
     try {
 	// deserialize
 	msgpack::unpacked res;

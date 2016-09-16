@@ -7,13 +7,21 @@ Config& Config::get_config() {
 }
 
 void Config::read_server_list() {
-
-    std::string filename("/home/murata/ramp/server_lists/");
+    
+    // get current working directly name
+    char cwdname[256];
+    memset(cwdname, '\0', 256);
+    getcwd(cwdname, 256);
+    
+    //std::string filename("/home/murata/ramp-with-rdma/server_lists/");
+    std::string filename(cwdname);
+    
+    filename += "/server_lists";
 
     if (this->com_type == ComType::TCP) {
-	filename += "tcp";
+	filename += "/tcp";
     } else {
-	filename += "ib";
+	filename += "/ib";
     }
     
     FILE *fp = fopen(filename.c_str(), "r");
