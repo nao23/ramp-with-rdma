@@ -15,6 +15,8 @@
 class RDMAWriteSocket : public SendRecvSocket {
 
 private:       
+    static std::shared_ptr<spdlog::logger> class_logger;  // for this class
+
     void setup_write_buf();
 
 protected:

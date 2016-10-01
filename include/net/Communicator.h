@@ -4,6 +4,7 @@
 #include <msgpack.hpp>
 #include "Mutex.h"
 #include "MessageHeader.h"
+#include "spdlog/spdlog.h"
 
 #define PACKET_SIZE (2560)
 #define PACKET_WINDOW_SIZE (10)
@@ -16,20 +17,29 @@ private:
     msgpack::packer<msgpack::sbuffer> pk;
     msgpack::unpacker unpk;
     
-    void pack_args() {}
+    void pack_args() {} // for recursion end
     template<class First, class... Rest> void pack_args(First first, Rest... rest) {
 	this->pk.pack(first);
 	pack_args(rest...);
     }
 
-    void unpack_args() {}
+    void unpack_args() {} // for recursion end
     template<class First, class... Rest> void unpack_args(First first, Rest... rest) {
-	msgpack::unpacked res;
-	this->unpk.next(&res);
-	msgpack::object obj = res.get();
-	obj.convert(first);
+	try {
+	    msgpack::unpacked res;
+	    this->unpk.next(&res);
+	    msgpack::object obj = res.get();
+	    obj.convert(first);
+	} catch (msgpack::unpack_error& e) {
+	    logger->error(e.what());
+	} catch (msgpack::type_error& e) {
+	    logger->error(e.what());
+	}
 	unpack_args(rest...);
     }
+    
+protected:
+    std::shared_ptr<spdlog::logger> logger;  // for each instances
     
 public:
     Mutex mtx;

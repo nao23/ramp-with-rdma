@@ -1,8 +1,11 @@
 #include "SendRecvSocket.h"
 
 
+std::shared_ptr<spdlog::logger> SendRecvSocket::class_logger = spdlog::stdout_logger_mt("SendRecvSocket", true);
+
 SendRecvSocket::SendRecvSocket(struct rdma_cm_id* client_id) : send_bufs(PACKET_WINDOW_SIZE) {
     this->client_id = client_id;
+    this->logger = spdlog::stdout_logger_mt("SendRecvSocket-" + std::to_string(client_id->port_num), true);
     this->verbs_mr = NULL;
     setup_verbs_buf();
 }
@@ -27,8 +30,8 @@ SendRecvSocket* SendRecvSocket::connect(const HostAndPort& hp) {
     char* port_str = const_cast<char*>(hp.port_str);
     
     if (rdma_getaddrinfo(hostname, port_str, &hints, &res) < 0) {
-	perror("rdma_getaddrinfo");
-	exit(1);
+        class_logger->error("rdma_getaddrinfo: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     struct ibv_qp_init_attr attr;
@@ -41,17 +44,17 @@ SendRecvSocket* SendRecvSocket::connect(const HostAndPort& hp) {
     attr.sq_sig_all = 1;
     
     if (rdma_create_ep(&client_id, res, NULL, &attr) < 0) {
+	class_logger->error("rdma_create_ep: {}", strerror(errno));
 	rdma_freeaddrinfo(res);
-	perror("rdma_create_ep");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 
     rdma_freeaddrinfo(res);
     
     if (rdma_connect(client_id, NULL) < 0) {
+        class_logger->error("rdma_connect: {}", strerror(errno));
         rdma_destroy_ep(client_id);
-	perror("rdma_connect");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
     
     return new SendRecvSocket(client_id);
@@ -63,10 +66,10 @@ void SendRecvSocket::setup_verbs_buf() {
 
     this->verbs_mr = rdma_reg_msgs(this->client_id, this->verbs_buf.addr, this->verbs_buf.size);
     if (this->verbs_mr == NULL) {
+        this->logger->error("rdma_reg_msgs: {}", strerror(errno));
 	this->verbs_buf.free();
         rdma_destroy_ep(this->client_id);
-	perror("rdma_reg_msgs");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 
     char* send_buf_begin = this->verbs_buf.addr + PACKET_SIZE * PACKET_WINDOW_SIZE;    
@@ -84,8 +87,8 @@ int SendRecvSocket::poll_send_cq(int num_entries, struct ibv_wc* wc) {
     
     while (!(ret = ibv_poll_cq(this->client_id->send_cq, num_entries, wc)));
     if (ret < 0) {
-	perror("ibv_poll_cq");
-	exit(1);
+        this->logger->error("ibv_poll_cq: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
     return ret;
@@ -115,11 +118,11 @@ Buffer SendRecvSocket::get_send_buf() {
 void SendRecvSocket::post_send(const Buffer& buf) {
     
     if (rdma_post_send(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0) < 0) {
+        this->logger->error("rdma_post_send: {}", strerror(errno));
 	rdma_dereg_mr(this->verbs_mr);
 	this->verbs_buf.free();
 	rdma_destroy_ep(this->client_id);
-	perror("rdma_post_send");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -128,8 +131,8 @@ int SendRecvSocket::poll_recv_cq(int num_entries, struct ibv_wc* wc) {
     int ret;
     while (!(ret = ibv_poll_cq(this->client_id->recv_cq, num_entries, wc)));
     if (ret < 0) {
-	perror("ibv_poll_cq");
-	exit(1);
+        this->logger->error("ibv_poll_cq: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     return ret;
@@ -145,11 +148,11 @@ Buffer SendRecvSocket::get_recv_buf() {
 void SendRecvSocket::post_recv(const Buffer& buf) {
     
     if (rdma_post_recv(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr) < 0) {
+        this->logger->error("rdma_post_recv: {}", strerror(errno));
 	rdma_dereg_mr(this->verbs_mr);
 	this->verbs_buf.free();
 	rdma_destroy_ep(this->client_id);
-	perror("rdma_post_recv");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -184,8 +187,8 @@ void SendRecvSocket::send_close() {
 
     int ret = ibv_poll_cq(this->client_id->send_cq, PACKET_WINDOW_SIZE, wc);
     if (ret < 0) {
-	perror("ibv_poll_cq");
-	exit(1);
+        this->logger->error("ibv_poll_cq: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     // send close msg

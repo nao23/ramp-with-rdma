@@ -28,16 +28,16 @@ SendRecvServerSocket::SendRecvServerSocket(char* port_str) {
     attr.sq_sig_all = 1;
     
     if (rdma_create_ep(&this->listen_id, res, NULL, &attr) < 0) {
-	rdma_freeaddrinfo(res);
         this->logger->error("rdma_create_ep: {}", strerror(errno));
+	rdma_freeaddrinfo(res);
         exit(EXIT_FAILURE);
     }
     
     rdma_freeaddrinfo(res);
     
     if (rdma_listen(this->listen_id, LISTEN_MAX) < 0) {
-        rdma_destroy_ep(this->listen_id);
         this->logger->error("rdma_listen: {}", strerror(errno));
+        rdma_destroy_ep(this->listen_id);
         exit(EXIT_FAILURE);
     }
 }

@@ -11,6 +11,7 @@
 class SendRecvSocket : public Communicator {
 
 private:
+    static std::shared_ptr<spdlog::logger> class_logger;  // for this class
     Buffer msg_buf;
 
 protected:

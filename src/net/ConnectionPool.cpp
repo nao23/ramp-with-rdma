@@ -27,7 +27,7 @@ Communicator* ConnectionPool::get(const Key& key) {
 
     Config& config = Config::get_config();
     size_t hash_v = std::hash<std::string>()(key);
-    HostAndPort hp = config.server_list.at(hash_v % config.server_num);
+    HostAndPort hp = config.server_list.at(hash_v % config.server_list.size());
     Communicator* com = this->connections.at(hp);
     this->access_coms.insert(com);
 

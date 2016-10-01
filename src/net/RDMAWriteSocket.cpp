@@ -1,6 +1,8 @@
 #include "RDMAWriteSocket.h"
 
 
+std::shared_ptr<spdlog::logger> RDMAWriteSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteSocket", true);
+
 RDMAWriteSocket::RDMAWriteSocket(struct rdma_cm_id* client_id) : SendRecvSocket(client_id) {
     
     this->write_mr = NULL;
@@ -36,8 +38,8 @@ RDMAWriteSocket* RDMAWriteSocket::connect(const HostAndPort& hp) {
     char* port_str = const_cast<char*>(hp.port_str);
     
     if (rdma_getaddrinfo(hostname, port_str, &hints, &res) < 0) {
-	perror("rdma_getaddrinfo");
-	exit(1);
+	class_logger->error("rdma_getaddrinfo: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     struct ibv_qp_init_attr attr;
@@ -50,17 +52,17 @@ RDMAWriteSocket* RDMAWriteSocket::connect(const HostAndPort& hp) {
     attr.sq_sig_all = 1;
     
     if (rdma_create_ep(&client_id, res, NULL, &attr) < 0) {
+	class_logger->error("rdma_create_ep: {}", strerror(errno));
 	rdma_freeaddrinfo(res);
-	perror("rdma_create_ep");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 
     rdma_freeaddrinfo(res);
     
     if (rdma_connect(client_id, NULL) < 0) {
+	class_logger->error("rdma_connect: {}", strerror(errno));
         rdma_destroy_ep(client_id);
-	perror("rdma_connect");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return new RDMAWriteSocket(client_id);
@@ -72,9 +74,9 @@ void RDMAWriteSocket::setup_write_buf() {
     
     this->write_mr = rdma_reg_write(this->client_id, this->write_buf.addr, this->write_buf.size);
     if (this->write_mr == NULL) {
+	this->logger->error("rdma_reg_write: {}", strerror(errno));
 	this->write_buf.free();
-        perror("rdma_reg_write");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -84,9 +86,9 @@ void RDMAWriteSocket::post_write(const Buffer& buf, const RemoteKeyAndAddr& rka)
     uint64_t raddr = rka.remote_addr;
 
     if (rdma_post_write(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0, raddr, rkey) < 0) {
+	this->logger->error("rdma_post_write: {}", strerror(errno));
 	this->send_bufs.push_front(buf);
-        perror("rdma_post_write");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -96,8 +98,8 @@ void RDMAWriteSocket::post_read(const Buffer& buf, const RemoteKeyAndAddr& rka) 
     uint64_t raddr = rka.remote_addr;
 
     if (rdma_post_read(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0, raddr, rkey) < 0) {
-	perror("rdma_post_read");
-        exit(1);
+	this->logger->error("rdma_post_read: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -107,8 +109,8 @@ void RDMAWriteSocket::setup_read_buf() { // only called on server side
 
     this->read_mr = rdma_reg_read(this->client_id, config.cache_addr, config.cache_size);
     if (this->read_mr == NULL) {
-        perror("rdma_reg_read");
-        exit(1);
+	this->logger->error("rdma_reg_read: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -172,34 +174,22 @@ void RDMAWriteSocket::send_msg(MessageHeader header, char* body) {
 
 void RDMAWriteSocket::recv_header(MessageHeader* header) {
 
-    //Config& config = Config::get_config();
-
     volatile int* is_arrived = (int*)(this->write_buf.addr + offsetof(MessageHeader, is_arrived));
     while (true) {
 	if (*is_arrived != 0) {
 	    this->write_buf.read(header);
 	    return;
 	} 
-	/*
-	if (nanosleep(&config.sleep_time, NULL) != 0) {
-	    perror("nanosleep");
-	    }*/	    
     }
 }
 
 char* RDMAWriteSocket::get_body(size_t body_size) {
-
-    //Config& config = Config::get_config();
 
     volatile int* is_arrived = (int*)(this->write_buf.addr + sizeof(MessageHeader) + body_size);
     while (true) {
 	if (*is_arrived != 0) {
 	    return (this->write_buf.addr + sizeof(MessageHeader));
 	} 
-	/*
-	if (nanosleep(&config.sleep_time, NULL) != 0) {
-	    perror("nanosleep");
-	    }*/
     }
 }
 
@@ -217,8 +207,8 @@ void RDMAWriteSocket::send_close() {
     
     int ret = ibv_poll_cq(this->client_id->send_cq, PACKET_WINDOW_SIZE, wc);
     if (ret < 0) {
-	perror("ibv_poll_cq");
-        exit(1);
+	this->logger->error("ibv_poll_cq: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     // send close msg

@@ -1,6 +1,8 @@
 #include "RDMAWriteImmSocket.h"
 
 
+std::shared_ptr<spdlog::logger> RDMAWriteImmSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteImmSocket", true);
+
 RDMAWriteImmSocket* RDMAWriteImmSocket::connect(const HostAndPort& hp) {
 
     struct rdma_cm_id* client_id = NULL; 
@@ -14,8 +16,8 @@ RDMAWriteImmSocket* RDMAWriteImmSocket::connect(const HostAndPort& hp) {
     char* port_str = const_cast<char*>(hp.port_str);
     
     if (rdma_getaddrinfo(hostname, port_str, &hints, &res) < 0) {
-	perror("rdma_getaddrinfo");
-	exit(1);
+	class_logger->error("rdma_getaddrinfo: {}", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     
     struct ibv_qp_init_attr attr;
@@ -28,17 +30,17 @@ RDMAWriteImmSocket* RDMAWriteImmSocket::connect(const HostAndPort& hp) {
     attr.sq_sig_all = 1;
     
     if (rdma_create_ep(&client_id, res, NULL, &attr) < 0) {
+	class_logger->error("rdma_create_ep: {}", strerror(errno));
 	rdma_freeaddrinfo(res);
-	perror("rdma_create_ep");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
 
     rdma_freeaddrinfo(res);
     
     if (rdma_connect(client_id, NULL) < 0) {
+	class_logger->error("rdma_connect: {}", strerror(errno));
         rdma_destroy_ep(client_id);
-	perror("rdma_connect");
-	exit(1);
+        exit(EXIT_FAILURE);
     }
     
     return new RDMAWriteImmSocket(client_id);
@@ -50,9 +52,9 @@ void RDMAWriteImmSocket::post_write_imm(const Buffer& buf, const RemoteKeyAndAdd
     uint64_t raddr = rka.remote_addr;
 
     if (rdma_post_write_imm(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0, raddr, rkey) < 0) {
+	this->logger->error("rdma_post_write_imm: {}", strerror(errno));
 	this->send_bufs.push_front(buf);
-        perror("rdma_post_write_imm");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -89,8 +91,8 @@ void RDMAWriteImmSocket::send_close() {
     int ret;
     ret = ibv_poll_cq(this->client_id->send_cq, PACKET_WINDOW_SIZE, wc);
     if (ret < 0) {
-        perror("ibv_poll_cq");
-        exit(1);
+	this->logger->error("ibv_poll_cq: {}", strerror(errno));
+        exit(EXIT_FAILURE); 
     }
     
     // send close msg

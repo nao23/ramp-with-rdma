@@ -8,6 +8,7 @@
 class RDMAWriteImmSocket : public RDMAWriteSocket {
 
 private:
+    static std::shared_ptr<spdlog::logger> class_logger;  // for this class
     Buffer msg_buf;
 
     void post_write_imm(const Buffer& buf, const RemoteKeyAndAddr& rka);        

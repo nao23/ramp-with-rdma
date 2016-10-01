@@ -14,6 +14,7 @@
 class TCPSocket : public Communicator {
 
 private:
+    static std::shared_ptr<spdlog::logger> class_logger;  // for this class    
     int sock;
     Buffer msg_buf;
 
