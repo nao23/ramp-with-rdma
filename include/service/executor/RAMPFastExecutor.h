@@ -13,7 +13,7 @@ protected:
     void get(const Key& key, const Timestamp& ts_req);
 
 public:
-    RAMPFastExecutor(Communicator* com, Table* table) : TrxExecutor(com, table) {}
+    RAMPFastExecutor(int id, Communicator* com, Table* table) : TrxExecutor(id, com, table) {}
     ~RAMPFastExecutor() = default;
     void run();
 };

@@ -7,11 +7,14 @@
 
 class TrxExecutor {
 
+protected:
+    int id;
+
 public:
     Communicator* com;
     Table* table;
  
-    TrxExecutor(Communicator* com, Table* table) : com(com), table(table) {}
+    TrxExecutor(int id, Communicator* com, Table* table) : id(id), com(com), table(table) {}
     virtual ~TrxExecutor() = default;
     virtual void run() = 0;
 };

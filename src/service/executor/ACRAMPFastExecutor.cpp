@@ -1,7 +1,7 @@
 #include "ACRAMPFastExecutor.h"
 
 
-ACRAMPFastExecutor::ACRAMPFastExecutor(Communicator* com, Table* table) : RAMPFastExecutor(com, table) { 
+ACRAMPFastExecutor::ACRAMPFastExecutor(int id, Communicator* com, Table* table) : RAMPFastExecutor(id, com, table) { 
     this->rdma_com = reinterpret_cast<RDMAWriteSocket*>(this->com);
     this->rdma_com->setup_read_buf();
 }

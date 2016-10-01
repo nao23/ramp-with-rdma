@@ -12,6 +12,6 @@ private:
 
 public:
     void run();
-    ACRAMPFastExecutor(Communicator* com, Table* table);
+    ACRAMPFastExecutor(int id, Communicator* com, Table* table);
     ~ACRAMPFastExecutor() = default;
 };

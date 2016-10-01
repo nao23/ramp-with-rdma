@@ -13,7 +13,7 @@ private:
     void get(const Key& key);
 
 public:    
-    NoCCExecutor(Communicator* com, Table* table) : TrxExecutor(com, table) {}
+    NoCCExecutor(int id, Communicator* com, Table* table) : TrxExecutor(id, com, table) {}
     ~NoCCExecutor() = default;
     void run();
 };

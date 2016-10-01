@@ -1,8 +1,8 @@
 #include "LockBasedExecutor.h"
 
 
-LockBasedExecutor::LockBasedExecutor(Communicator* com, Table* table, LockManager* lock_manager) 
-: TrxExecutor(com, table) {
+LockBasedExecutor::LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager) 
+  : TrxExecutor(id, com, table) {
 
     this->lock_manager = lock_manager;
     Config& config = Config::get_config();

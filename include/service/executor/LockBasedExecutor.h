@@ -18,7 +18,7 @@ public:
     void get(const Key& key);
     void release_locks();
 
-    LockBasedExecutor(Communicator* com, Table* table, LockManager* lock_manager);
+    LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager);
     ~LockBasedExecutor() = default;
     void run();
 };
