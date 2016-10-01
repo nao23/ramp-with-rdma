@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spdlog/spdlog.h"
 #include "Containers.h"
 #include "Item.h"
 #include "CommittedItemsCache.h"
@@ -7,12 +8,15 @@
 
 class Table {
 
+private:
+    std::shared_ptr<spdlog::logger> logger;    
+
 public:
     ConcurrentMap<Timestamp, ConcurrentVector<Item>> items;
     ConcurrentMap<Key, Timestamp> latest_commit;
     CommittedItemsCache committed_items;
 
-    Table() = default;
+    Table();
     void prepare(const Item& item);
     void commit(const Timestamp& ts_c);
     void commit(const Key& key, const Timestamp& ts_c);
