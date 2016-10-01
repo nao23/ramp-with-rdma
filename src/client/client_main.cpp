@@ -1,9 +1,16 @@
+#include "spdlog/spdlog.h"
 #include "Client.h"
 #include "cmdline.h"
 
 
 int main(int argc, char *argv[]) {
 
+    // Create a multithreaded color logger
+    std::shared_ptr<spdlog::logger> logger = spdlog::stdout_logger_mt("main", true);
+    // Set global log level to info
+    spdlog::set_level(spdlog::level::debug);
+
+    // Create a parser, setup and run
     cmdline::parser parser;
     parser.add<std::string>("trx_type", 't', "transaction type", true, "");
     parser.add<std::string>("com_type", 'c', "communication type", true, "");
@@ -17,6 +24,7 @@ int main(int argc, char *argv[]) {
     Config& config = Config::get_config();
     config.init();
 
+    // Get trx type from parser and set it to config object    
     std::string trx_type = parser.get<std::string>("trx_type");
     if (trx_type == "rr" ) {
         config.trx_type = TrxType::LOCK_BASED;
@@ -31,10 +39,11 @@ int main(int argc, char *argv[]) {
     } else if (trx_type == "ac_ramp_f") {
         config.trx_type = TrxType::AC_RAMP_FAST;
     } else {
-        printf("Unkown Trx_Type\n");
-        exit(1);
+        logger->error("Unkown trx type");
+        return EXIT_FAILURE;
     }
 
+    // Get com type from parser and set it to config object
     std::string com_type = parser.get<std::string>("com_type");
     if (com_type == "tcp") {
 	config.com_type = ComType::TCP;
@@ -47,8 +56,8 @@ int main(int argc, char *argv[]) {
     } else if (com_type == "rdma_write_imm") { 
 	config.com_type = ComType::RDMA_WRITE_IMM;
     } else {
-	printf("Unkown Communication Type\n");
-	exit(1);
+        logger->error("Unkown com type");
+        return EXIT_FAILURE;
     }
     
     config.data_num = parser.get<int>("data_num");

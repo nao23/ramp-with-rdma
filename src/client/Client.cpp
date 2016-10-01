@@ -3,6 +3,8 @@
 
 Client::Client() {
 
+    this->logger = spdlog::stdout_logger_mt("Client", true);
+
     Config& config = Config::get_config();
     this->trx_queue.gen_test_trxs();
     
@@ -10,13 +12,13 @@ Client::Client() {
 	
 	TrxHandler* trx_handler;
 	if (config.trx_type == TrxType::LOCK_BASED) {
-	    trx_handler = new LockBasedHandler();
+	    trx_handler = new LockBasedHandler(i);
 	} else if (config.trx_type == TrxType::NO_CONCURRENCY_CONTROL) { 
-	    trx_handler = new NoCCHandler();
+	    trx_handler = new NoCCHandler(i);
 	} else if (config.trx_type == TrxType::RAMP_FAST) {
-	    trx_handler = new RAMPFastHandler();
+	    trx_handler = new RAMPFastHandler(i);
 	} else if (config.trx_type == TrxType::AC_RAMP_FAST) { 
-	    trx_handler = new ACRAMPFastHandler();
+	    trx_handler = new ACRAMPFastHandler(i);
 	} else {
 	    break;
 	}
@@ -28,13 +30,14 @@ Client::Client() {
 }
 
 void Client::start_all() {
-
+    
+    this->logger->info("Connect to all servers");    
     for (auto& handler : this->handlers) {
 	handler->cp.connect_all();
     }
 
+    this->logger->info("Start all worker threads");
     this->bgn = Timestamp::now();
-
     for (auto &w : this->workers) {
 	w.start();
     }
@@ -45,9 +48,11 @@ void Client::check_finish() {
     for (auto &w : this->workers) {
 	w.join();
     }
+    this->logger->info("All worker thread joined");
 
     this->end = Timestamp::now();
 
+    this->logger->info("Close all connections");
     for (auto& handler : this->handlers) {
 	handler->cp.close_all();
 	delete handler;
@@ -59,8 +64,7 @@ void Client::print_result() const {
     Config& config = Config::get_config();
     double run_time = Timestamp::get_elapsed_sec(this->bgn, this->end);
     
-    //std::cout << "RunTime(sec): " << std::setprecision(4) << run_time << std::endl;
-    //std::cout << "Throughput(trx/sec): " << std::setprecision(4) << (config.trx_num / run_time) << std::endl;
-    printf("RunTime(sec): %lf\n", run_time);
-    printf("Throughput(trx/sec): %lf\n", (config.trx_num / run_time));
+    this->logger->info("*** performance result ***");
+    this->logger->info("RunTime(sec): {}", run_time);
+    this->logger->info("Throughput(trx/sec): {}", (config.trx_num / run_time));
 }
