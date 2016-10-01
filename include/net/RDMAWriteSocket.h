@@ -1,23 +1,33 @@
 #pragma once
 
-#include "RDMACMSocket.h"
+#include <rdma/rdma_cma.h>
+#include <rdma/rdma_verbs.h>
+#include <boost/circular_buffer.hpp>
+#include "Communicator.h"
+#include "SendRecvSocket.h"
+#include "Buffer.h"
+#include "HostAndPort.h"
+#include "RemoteKeyAndAddr.h"
 #include "Config.h"
 #include "Item.h"
 
 
-class RDMAWriteSocket : public Communicator {
+class RDMAWriteSocket : public SendRecvSocket {
 
 private:       
     void setup_write_buf();
+
+protected:
+    void post_write(const Buffer& buf, const RemoteKeyAndAddr& rka);
+    void post_read(const Buffer& buf, const RemoteKeyAndAddr& rka);
     
 public:
-    RDMACMSocket* rsock;
     struct ibv_mr* read_mr;
     Buffer write_buf;
     struct ibv_mr* write_mr;
     RemoteKeyAndAddr rka;
 
-    RDMAWriteSocket(RDMACMSocket* rsock);
+    RDMAWriteSocket(struct rdma_cm_id* client_id);
     ~RDMAWriteSocket();
     static RDMAWriteSocket* connect(const HostAndPort& hp);
 

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "RDMACMServerSocket.h"
+#include "Acceptor.h"
 #include "RDMAWriteImmSocket.h"
 
 
 class RDMAWriteImmServerSocket : public Acceptor {
     
 private:
-    RDMACMServerSocket rsock;
+    struct rdma_cm_id* listen_id;
     
 public:
-    RDMAWriteImmServerSocket(char* port_str) : rsock(port_str) {}
+    RDMAWriteImmServerSocket(char* port_str);
     ~RDMAWriteImmServerSocket() = default;
     Communicator* accept();
 };

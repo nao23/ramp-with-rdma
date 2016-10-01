@@ -1,18 +1,35 @@
 #pragma once
 
-#include "RDMACMSocket.h"
+#include <rdma/rdma_cma.h>
+#include <rdma/rdma_verbs.h>
+#include <boost/circular_buffer.hpp>
 #include "Communicator.h"
+#include "Buffer.h"
+#include "HostAndPort.h"
 
 
 class SendRecvSocket : public Communicator {
 
 private:
     Buffer msg_buf;
+
+protected:
+    struct rdma_cm_id* client_id;
+    Buffer verbs_buf;
+    struct ibv_mr* verbs_mr;
+    boost::circular_buffer<Buffer> send_bufs;
+
+    void setup_verbs_buf();
+    int poll_send_cq(int num_entries, struct ibv_wc* wc);
+    Buffer get_send_buf();
+    void post_send(const Buffer& buf);
+    
+    int poll_recv_cq(int num_entries, struct ibv_wc* wc);
+    Buffer get_recv_buf();
+    void post_recv(const Buffer& buf);
     
 public:
-    RDMACMSocket* rsock;
-
-    SendRecvSocket(RDMACMSocket* rsock);
+    SendRecvSocket(struct rdma_cm_id* client_id);
     ~SendRecvSocket();
     static SendRecvSocket* connect(const HostAndPort& hp);
 
