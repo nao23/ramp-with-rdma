@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spdlog/spdlog.h"
 #include "Config.h"
 #include "Acceptor.h"
 #include "Table.h"
@@ -13,6 +14,7 @@
 class Server {
 
 private:
+    std::shared_ptr<spdlog::logger> logger;
     Acceptor* acc;
     Table table;
     LockManager lock_manager;
