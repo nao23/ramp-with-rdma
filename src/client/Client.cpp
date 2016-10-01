@@ -66,5 +66,5 @@ void Client::print_result() const {
     
     this->logger->info("*** performance result ***");
     this->logger->info("RunTime(sec): {}", run_time);
-    this->logger->info("Throughput(trx/sec): {}", (config.trx_num / run_time));
+    this->logger->info("Throughput(trx/sec): {}", ((config.read_trx_num + config.write_trx_num)/ run_time));
 }

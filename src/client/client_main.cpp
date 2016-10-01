@@ -20,9 +20,8 @@ int main(int argc, char *argv[]) {
     parser.add<int>("trx_len", 'l', "transaction size (operations)", false, 8);
     parser.add<int>("value_size", 'v', "value size (bytes)", false, 1000);
     parser.parse_check(argc, argv);
-
+    
     Config& config = Config::get_config();
-    config.init();
 
     // Get trx type from parser and set it to config object    
     std::string trx_type = parser.get<std::string>("trx_type");
@@ -65,17 +64,14 @@ int main(int argc, char *argv[]) {
     config.trx_len = parser.get<int>("trx_len");
     config.write_trx_num = parser.get<int>("write_trx_num");
     config.read_trx_num = parser.get<int>("read_trx_num");
-    config.trx_num = config.write_trx_num + config.read_trx_num;
     config.value_size = parser.get<int>("value_size");
     config.read_server_list();
-    config.sleep_flag = true;
-    config.sleep_time = {0, 100};
+
     
-    Client client;
-    
+    Client client;    
     client.start_all();
     client.check_finish();
     client.print_result();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

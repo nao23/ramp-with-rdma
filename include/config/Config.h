@@ -18,7 +18,6 @@ private:
     Config& operator = (const Config& other) = delete;
     
 public:
-    int host_id;
     ComType com_type;
     TrxType trx_type;
     int data_num;
@@ -26,9 +25,7 @@ public:
     int trx_len;
     int write_trx_num;
     int read_trx_num;
-    int trx_num;
     int value_size;
-    int server_num;
     std::vector<HostAndPort> server_list;
     int max_key_num;
     char* cache_addr;
@@ -38,10 +35,6 @@ public:
     LockDuration write_duration;
     LockDuration read_duration;
 
-    bool sleep_flag;
-    struct timespec sleep_time;
-
     static Config& get_config();
     void read_server_list();
-    void init();
 };

@@ -6,6 +6,7 @@ bool Timestamp::operator == (const Timestamp& other) const {
 }
 
 bool Timestamp::operator > (const Timestamp& other) const {
+    
     if (this->sec == other.sec) {
         return (this->usec > other.usec);
     } else {
@@ -14,6 +15,7 @@ bool Timestamp::operator > (const Timestamp& other) const {
 }
 
 bool Timestamp::operator < (const Timestamp& other) const {
+    
     if (this->sec == other.sec) {
         return (this->usec < other.usec);
     } else {
