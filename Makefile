@@ -5,11 +5,11 @@ vpath %.cpp ./src/config:./src/util:./src/lib
 CXXFLAGS = -Wall -O2 -std=c++11 -g
 INCLUDE =  -I ./include/server -I ./include/client -I ./include/net \
 		-I ./include/data -I ./include/service -I ./include/service/handler \
-		-I ./include/service/executor -I ./include/config -I ./include/util
+		-I ./include/service/executor -I ./include/config -I ./include/util -I ./include
 LDFLAGS = -ltbb -lrdmacm -libverbs
 
 SERVER_SRC =    server_main.cpp Server.cpp ServerThread.cpp \
-		HostAndPort.cpp TCPServerSocket.cpp TCPSocket.cpp RDMACMServerSocket.cpp RDMACMSocket.cpp \
+		HostAndPort.cpp TCPServerSocket.cpp TCPSocket.cpp \
 		SendRecvServerSocket.cpp SendRecvSocket.cpp \
 		RDMAWriteServerSocket.cpp RDMAWriteSocket.cpp \
 		RDMAWriteImmSocket.cpp RDMAWriteImmServerSocket.cpp \
@@ -21,7 +21,7 @@ SERVER_SRC =    server_main.cpp Server.cpp ServerThread.cpp \
 
 CLIENT_SRC =    client_main.cpp Client.cpp ClientThread.cpp \
 		HostAndPort.cpp ConnectionPool.cpp \
-		TCPSocket.cpp RDMACMSocket.cpp SendRecvSocket.cpp RDMAWriteSocket.cpp RDMAWriteImmSocket.cpp \
+		TCPSocket.cpp SendRecvSocket.cpp RDMAWriteSocket.cpp RDMAWriteImmSocket.cpp \
 		Timestamp.cpp Item.cpp \
 		Transaction.cpp TrxQueue.cpp \
 		RAMPFastHandler.cpp \
@@ -30,7 +30,7 @@ CLIENT_SRC =    client_main.cpp Client.cpp ClientThread.cpp \
 
 RAMPLIB_SRC =   com_yahoo_ycsb_db_JNIRAMPClient.cpp \
 		HostAndPort.cpp ConnectionPool.cpp \
-		TCPSocket.cpp RDMACMSocket.cpp SendRecvSocket.cpp \
+		TCPSocket.cpp SendRecvSocket.cpp \
 		RDMAWriteSocket.cpp RDMAWriteImmSocket.cpp \
                 Timestamp.cpp Item.cpp \
                 RAMPFastHandler.cpp \
