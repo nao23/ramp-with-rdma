@@ -7,7 +7,7 @@
 class LockBasedHandler : public TrxHandler {
 
 public:
-    LockBasedHandler() = default;
+    LockBasedHandler(int id);
     ~LockBasedHandler() = default;
     
     void put_all();

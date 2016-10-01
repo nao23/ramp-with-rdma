@@ -1,11 +1,15 @@
 #include "NoCCHandler.h"
 
 
+NoCCHandler::NoCCHandler(int id) {
+    this->logger = spdlog::stdout_logger_mt("NoCCHandler-" + std::to_string(id), true);
+}
+
 void NoCCHandler::put_all() {
 
     Timestamp ts = Timestamp::now();
 
-    // prepare phase
+    this->logger->debug("Send PREPARE requests");
     tbb::parallel_for_each(this->trx->write_set,
     [&](const std::pair<Key, Map<Field, Value>>& w) {
 	Key key = w.first;
@@ -16,14 +20,15 @@ void NoCCHandler::put_all() {
 	com->mtx.unlock();
     });
 
-    // commit phase
+    this->logger->debug("Commit phase");
     send_to_all(MessageType::COMMIT, ts);
 }
 
 void NoCCHandler::get_all() {
 
-    ConcurrentMap<Key, Item> ret;
-    
+    ConcurrentMap<Key, Item> ret;  
+
+    this->logger->debug("Send GET requests");
     tbb::parallel_for_each(this->trx->read_set,
     [&](const std::pair<Key, Set<Field>>& r){
 	Key key = r.first;

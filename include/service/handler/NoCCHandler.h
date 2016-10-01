@@ -7,7 +7,7 @@
 class NoCCHandler : public TrxHandler {
 
 public:
-    NoCCHandler() = default;
+    NoCCHandler(int id);
     ~NoCCHandler() = default;
 
     void put_all();

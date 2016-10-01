@@ -9,7 +9,7 @@ private:
     ConcurrentMap<Key, RemoteKeyAndAddr> addr_cache;
 
 public:
-    ACRAMPFastHandler() = default;
+    ACRAMPFastHandler(int id) : RAMPFastHandler(id) {}
     ~ACRAMPFastHandler() = default;
 
     void get_all();

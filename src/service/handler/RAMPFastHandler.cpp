@@ -1,11 +1,15 @@
 #include "RAMPFastHandler.h"
 
 
+RAMPFastHandler::RAMPFastHandler(int id) {
+    this->logger = spdlog::stdout_logger_mt("RAMPFastHandler-" + std::to_string(id), true);
+}
+
 void RAMPFastHandler::put_all() {
 
     Timestamp ts = Timestamp::now();
     
-    // prepare phase
+    this->logger->debug("Send PREPARE requests");
     tbb::parallel_for_each(this->trx->write_set,
     [&](const std::pair<Key, Map<Field, Value>>& w) {
 	Key key = w.first;
@@ -16,7 +20,7 @@ void RAMPFastHandler::put_all() {
 	com->mtx.unlock();
     });
         
-    // commit phase
+    this->logger->debug("Send COMMIT requests");
     send_to_all(MessageType::COMMIT, ts);
 }
 			       
@@ -24,7 +28,7 @@ void RAMPFastHandler::get_all() {
 
     ConcurrentMap<Key, Item> ret;
 
-    // 1st round
+    this->logger->debug("Send GET requests (1st round)");
     tbb::parallel_for_each(this->trx->read_set,
     [&](const std::pair<Key, Set<Field>>& r) {
 	Key key = r.first;
@@ -35,7 +39,7 @@ void RAMPFastHandler::get_all() {
 	com->mtx.unlock();
     });
 
-    // check missing version
+    this->logger->debug("Check missing version");
     ConcurrentMap<Key, Timestamp> v_latest;
     for (const auto& item : ret | boost::adaptors::map_values) {
         for (const auto& key : item.trx_keys) {
@@ -45,7 +49,7 @@ void RAMPFastHandler::get_all() {
 	}
     }
 
-    // 2nd round
+    this->logger->debug("Send GET requests (2nd round)");
     tbb::parallel_for_each(this->trx->read_set,
     [&](const std::pair<Key, Set<Field>>& r){
 	Key key = r.first;

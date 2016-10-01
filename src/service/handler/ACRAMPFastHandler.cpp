@@ -4,8 +4,8 @@
 void ACRAMPFastHandler::get_all() {
 
     ConcurrentMap<Key, Item> ret;
-    
-    // 1st round
+
+    this->logger->debug("Send GET_WITH_ADDR request"); 
     tbb::parallel_for_each(this->trx->read_set,
     [&](const std::pair<Key, Set<Field>>& r) {
 	Key key = r.first;
@@ -21,19 +21,22 @@ void ACRAMPFastHandler::get_all() {
 	    }
 	}
 	com->mtx.unlock();
-    });
+    });    
     
-    // check missing version
+
     ConcurrentMap<Key, Timestamp> v_latest;
+
+    this->logger->debug("Check missing version");
     for (const auto& item : ret | boost::adaptors::map_values) {
         for (const auto& key : item.trx_keys) {
             if (v_latest[key] < item.ts) {
                 v_latest[key] = item.ts;
             }
         }
-    }
+    }    
+
     
-    // 2nd round
+    this->logger->debug("Send GET requests");    
     tbb::parallel_for_each(this->trx->read_set,
     [&](const std::pair<Key, Set<Field>>& r) {
 	Key key = r.first;

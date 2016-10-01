@@ -8,7 +8,7 @@
 class RAMPFastHandler : public TrxHandler {
 
 public:
-    RAMPFastHandler() = default;
+    RAMPFastHandler(int id);
     ~RAMPFastHandler() = default;
 
     void put_all();

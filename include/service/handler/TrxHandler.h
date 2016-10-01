@@ -1,10 +1,14 @@
 #pragma once
 
+#include "spdlog/spdlog.h"
 #include "ConnectionPool.h"
 #include "Transaction.h"
 
 
 class TrxHandler {
+
+protected:
+    std::shared_ptr<spdlog::logger> logger;
 
 public:
     ConnectionPool cp;
