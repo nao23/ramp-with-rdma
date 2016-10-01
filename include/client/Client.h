@@ -15,8 +15,8 @@ private:
     std::shared_ptr<spdlog::logger> logger;
     Timestamp bgn, end;
     TrxQueue trx_queue;
-    Vector<ClientThread> workers;
-    Vector<TrxHandler*> handlers;
+    std::vector<ClientThread> workers;
+    std::vector<TrxHandler*> handlers;
 
 public:
     Client();

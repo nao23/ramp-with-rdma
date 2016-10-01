@@ -23,7 +23,7 @@ void LockBasedHandler::put_all() {
 
 void LockBasedHandler::get_all() {
 
-    Map<Key, Item> ret;
+    std::map<Key, Item> ret;
     
     this->logger->debug("Send GET requests");
     for (const auto& r : this->trx->read_set) {

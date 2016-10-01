@@ -7,7 +7,7 @@ void ACRAMPFastHandler::get_all() {
 
     this->logger->debug("Send GET_WITH_ADDR request"); 
     tbb::parallel_for_each(this->trx->read_set,
-    [&](const std::pair<Key, Set<Field>>& r) {
+    [&](const std::pair<Key, std::set<Field>>& r) {
 	Key key = r.first;
 	RDMAWriteSocket* com = reinterpret_cast<RDMAWriteSocket*>(this->cp.get(key));
 	com->mtx.lock();
@@ -38,7 +38,7 @@ void ACRAMPFastHandler::get_all() {
     
     this->logger->debug("Send GET requests");    
     tbb::parallel_for_each(this->trx->read_set,
-    [&](const std::pair<Key, Set<Field>>& r) {
+    [&](const std::pair<Key, std::set<Field>>& r) {
 	Key key = r.first;
 	if (v_latest[key] > ret[key].ts) {
 	    Communicator* com = this->cp.get(key);

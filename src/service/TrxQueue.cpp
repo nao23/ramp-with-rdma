@@ -10,7 +10,7 @@ void TrxQueue::gen_test_trxs() {
     std::uniform_int_distribution<int> value_dice(0, 9);
     std::vector<Transaction*> trxs;
 
-    Map<Field, Value> values;
+    std::map<Field, Value> values;
    
     char* val_str = new char[config.value_size];
     for (int i = 0; i < config.value_size; ++i) {
@@ -29,7 +29,7 @@ void TrxQueue::gen_test_trxs() {
     }
     
 
-    Set<Field> fields;
+    std::set<Field> fields;
     fields.insert(Field("f"));
 
     // generate read trxs

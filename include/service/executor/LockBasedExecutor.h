@@ -9,7 +9,7 @@ class LockBasedExecutor : public TrxExecutor {
 
 private:
     LockManager* lock_manager;
-    Set<Key> access_keys;
+    std::set<Key> access_keys;
     LockDuration write_duration;
     LockDuration read_duration;
 

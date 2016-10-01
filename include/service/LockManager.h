@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/noncopyable.hpp>
+#include <set>
 #include "Containers.h"
 #include "Key.h"
 #include "Mutex.h"
@@ -15,5 +16,5 @@ public:
     void read_lock(const Key& key);
     void write_lock(const Key& key);
     void unlock(const Key& key);
-    void unlock(const Set<Key>& keys);
+    void unlock(const std::set<Key>& keys);
 };

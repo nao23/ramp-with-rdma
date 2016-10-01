@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <iostream>
-#include "Containers.h"
+#include <vector>
 #include "ComType.h"
 #include "TrxType.h"
 #include "HostAndPort.h"
@@ -29,7 +29,7 @@ public:
     int trx_num;
     int value_size;
     int server_num;
-    Vector<HostAndPort> server_list;
+    std::vector<HostAndPort> server_list;
     int max_key_num;
     char* cache_addr;
     size_t cache_size;

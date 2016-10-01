@@ -13,8 +13,7 @@ void LockManager::unlock(const Key& key) {
     this->mutex_table.at(key).unlock();
 }
 
-void LockManager::unlock(const Set<Key>& keys) {
-    
+void LockManager::unlock(const std::set<Key>& keys) {    
     for (const auto& key : keys) {
 	this->mutex_table.at(key).unlock();
     }

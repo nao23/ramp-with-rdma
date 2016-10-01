@@ -11,7 +11,7 @@ void RAMPFastHandler::put_all() {
     
     this->logger->debug("Send PREPARE requests");
     tbb::parallel_for_each(this->trx->write_set,
-    [&](const std::pair<Key, Map<Field, Value>>& w) {
+    [&](const std::pair<Key, std::map<Field, Value>>& w) {
 	Key key = w.first;
 	Communicator* com = this->cp.get(key);
 	com->mtx.lock();
@@ -30,7 +30,7 @@ void RAMPFastHandler::get_all() {
 
     this->logger->debug("Send GET requests (1st round)");
     tbb::parallel_for_each(this->trx->read_set,
-    [&](const std::pair<Key, Set<Field>>& r) {
+    [&](const std::pair<Key, std::set<Field>>& r) {
 	Key key = r.first;
 	Communicator* com = this->cp.get(key); 
 	com->mtx.lock();
@@ -51,7 +51,7 @@ void RAMPFastHandler::get_all() {
 
     this->logger->debug("Send GET requests (2nd round)");
     tbb::parallel_for_each(this->trx->read_set,
-    [&](const std::pair<Key, Set<Field>>& r){
+    [&](const std::pair<Key, std::set<Field>>& r){
 	Key key = r.first;
 	if (v_latest[key] > ret[key].ts) {
 	    Communicator* com = this->cp.get(key);

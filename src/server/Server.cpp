@@ -21,7 +21,7 @@ void Server::start() {
     config.cache_size = this->table.committed_items.size;
 
     int i = 0;
-    Vector<ServerThread> sts;
+    std::vector<ServerThread> sts;
     sts.reserve(1000);
 
     while (true) {
