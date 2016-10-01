@@ -1,9 +1,8 @@
 #include "LockBasedExecutor.h"
 
 
-LockBasedExecutor::LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager) 
-  : TrxExecutor(id, com, table) {
-
+LockBasedExecutor::LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager) : TrxExecutor(id, com, table) {
+    this->logger = spdlog::stdout_logger_mt("LockBasedExecutor-" + std::to_string(id), true);
     this->lock_manager = lock_manager;
     Config& config = Config::get_config();
     this->write_duration = config.write_duration;
@@ -18,17 +17,21 @@ void LockBasedExecutor::run() {
 	this->com->recv_header(&header);
 		
 	if (header.req_type == MessageType::PUT) {
+            this->logger->debug("Received PUT request");
 	    Item item;
 	    this->com->recv_body(header.body_size, &item);
 	    put(item);
 	} else if (header.req_type == MessageType::GET) {
+            this->logger->debug("Received GET request");
 	    Key key;
 	    this->com->recv_body(header.body_size, &key);
 	    get(key);
 	} else if (header.req_type == MessageType::RELEASE_LOCKS) {
+            this->logger->debug("Received RELEASE_LOCKS request");
 	    this->com->recv_body(header.body_size);
 	    release_locks();
-	} else { // close req is received
+	} else {
+            this->logger->debug("Received CLOSE request");
 	    this->com->recv_body(header.body_size);
 	    break;
 	}

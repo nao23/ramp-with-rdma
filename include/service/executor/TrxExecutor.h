@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "spdlog/spdlog.h"
 #include "Communicator.h"
 #include "Table.h"
 
@@ -8,6 +9,7 @@
 class TrxExecutor {
 
 protected:
+    std::shared_ptr<spdlog::logger> logger;
     int id;
 
 public:
