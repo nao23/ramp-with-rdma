@@ -45,4 +45,4 @@ $(OBJDIR)/lib/%.o:
 
 .PHONY: clean
 clean:
-	rm -rf *~ $(SERVER) $(CLIENT) $(OBJDIR)
+	rm -rf *~ $(SERVER) $(CLIENT) $(LIB) $(OBJDIR)
