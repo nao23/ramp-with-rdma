@@ -14,7 +14,7 @@ JNIEXPORT void JNICALL Java_com_yahoo_ycsb_db_JNIRAMPClient__1configure(JNIEnv *
 
 JNIEXPORT jlong JNICALL Java_com_yahoo_ycsb_db_JNIRAMPClient__1construct(JNIEnv *env, jobject me) {
     
-    TrxHandler* handler = new RAMPFastHandler();
+    TrxHandler* handler = new RAMPFastHandler(0); // TODO: change TrxHandler type dynamicaly and set unique id
     return reinterpret_cast<long>(handler);
 }
 
@@ -55,7 +55,7 @@ JNIEXPORT void JNICALL Java_com_yahoo_ycsb_db_JNIRAMPClient__1read(JNIEnv *env, 
     Key key(k_addr, k_len);
 
     // get Fields
-    Set<Field> fields;
+    std::set<Field> fields;
     if (jfields != NULL) {
 	jobject jfields_iter = env->CallObjectMethod(jfields, iteratorMethod);
 	while(env->CallBooleanMethod(jfields_iter, hasNextMethod)) {
@@ -97,7 +97,7 @@ JNIEXPORT void JNICALL Java_com_yahoo_ycsb_db_JNIRAMPClient__1insert(JNIEnv *env
     Key key(addr, len);
     
     // get Values
-    Map<Field, Value> values;
+    std::map<Field, Value> values;
     jobject jvalues_entryset = env->CallObjectMethod(jvalues, entrySetMethod);   
     jobject jvalues_entryset_iter = env->CallObjectMethod(jvalues_entryset, iteratorMethod);
 
