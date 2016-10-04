@@ -12,6 +12,7 @@ void Table::prepare(const Item& item) {
 }
 
 void Table::commit(const Timestamp& ts_c) { 
+
     this->logger->debug("commit with ts: {}", ts_c.to_str());
     try {
 	for (const auto& item : this->items.at(ts_c)) {
@@ -49,6 +50,7 @@ Item Table::get_latest_item(const Key& key) {
 }
 
 Item Table::get_item_by_ver(const Key& key, const Timestamp& ts) const {
+
     this->logger->debug("get item for key: {}, ts: {}", key, ts.to_str());
     try {
 	for (const auto& item : this->items.at(ts)) {

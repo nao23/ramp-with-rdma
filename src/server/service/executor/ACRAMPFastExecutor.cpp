@@ -47,7 +47,6 @@ void ACRAMPFastExecutor::run() {
 }
 
 void ACRAMPFastExecutor::get_item_and_addr(Key key, Timestamp ts_req) {
-
     Item item = this->table->get_latest_item(key);
     RemoteKeyAndAddr rka(this->rdma_com->read_mr->rkey, this->table->committed_items.get_item_addr(key));
     this->com->send(MessageType::RESULT, item, rka);

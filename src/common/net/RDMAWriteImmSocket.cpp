@@ -1,8 +1,6 @@
 #include "RDMAWriteImmSocket.h"
 
 
-std::shared_ptr<spdlog::logger> RDMAWriteImmSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteImmSocket", true);
-
 RDMAWriteImmSocket* RDMAWriteImmSocket::connect(const HostAndPort& hp) {
 
     struct rdma_cm_id* client_id = NULL; 
@@ -59,7 +57,6 @@ void RDMAWriteImmSocket::post_write_imm(const Buffer& buf, const RemoteKeyAndAdd
 }
 
 void RDMAWriteImmSocket::send_msg(MessageHeader header, char* body) {
-
     Buffer send_buf = this->get_send_buf();
     int is_arrived = 0xffffffff;
     send_buf.write(header).write(body, header.body_size).write(is_arrived);
@@ -67,7 +64,6 @@ void RDMAWriteImmSocket::send_msg(MessageHeader header, char* body) {
 }
 
 void RDMAWriteImmSocket::recv_header(MessageHeader* header) {
-
     this->msg_buf = this->get_recv_buf();
     this->write_buf.read(header);
 }
@@ -77,7 +73,6 @@ char* RDMAWriteImmSocket::get_body(size_t body_size) {
 }
 
 void RDMAWriteImmSocket::clear_msg_buf() {
-
     this->write_buf.clear();
     this->post_recv(this->msg_buf);
 }
@@ -105,3 +100,5 @@ void RDMAWriteImmSocket::send_close() {
     struct ibv_wc close_wc;
     this->poll_send_cq(1, &close_wc);
 }
+
+std::shared_ptr<spdlog::logger> RDMAWriteImmSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteImmSocket", true);

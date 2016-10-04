@@ -38,13 +38,11 @@ void NoCCExecutor::run() {
 }
 
 void NoCCExecutor::prepare(const Item& item) {
-
     this->table->prepare(item);
     this->com->send(MessageType::DONE);
 }
 
 void NoCCExecutor::commit(const Timestamp& ts_c) {
-
     this->table->commit(ts_c);
     this->com->send(MessageType::DONE);
 }

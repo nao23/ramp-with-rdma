@@ -1,8 +1,6 @@
 #include "SendRecvSocket.h"
 
 
-std::shared_ptr<spdlog::logger> SendRecvSocket::class_logger = spdlog::stdout_logger_mt("SendRecvSocket", true);
-
 SendRecvSocket::SendRecvSocket(struct rdma_cm_id* client_id) : send_bufs(PACKET_WINDOW_SIZE) {
     this->client_id = client_id;
     this->logger = spdlog::stdout_logger_mt("SendRecvSocket-" + std::to_string(client_id->port_num), true);
@@ -115,8 +113,7 @@ Buffer SendRecvSocket::get_send_buf() {
     return ret;
 }
 
-void SendRecvSocket::post_send(const Buffer& buf) {
-    
+void SendRecvSocket::post_send(const Buffer& buf) {    
     if (rdma_post_send(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0) < 0) {
         this->logger->error("rdma_post_send: {}", strerror(errno));
 	rdma_dereg_mr(this->verbs_mr);
@@ -138,8 +135,7 @@ int SendRecvSocket::poll_recv_cq(int num_entries, struct ibv_wc* wc) {
     return ret;
 }
 
-Buffer SendRecvSocket::get_recv_buf() {
-    
+Buffer SendRecvSocket::get_recv_buf() {    
     struct ibv_wc wc;
     poll_recv_cq(1, &wc);
     return Buffer(reinterpret_cast<char*>(wc.wr_id), wc.byte_len);
@@ -158,14 +154,12 @@ void SendRecvSocket::post_recv(const Buffer& buf) {
 
 
 void SendRecvSocket::send_msg(MessageHeader header, char* body) {
-
     Buffer send_buf = this->get_send_buf();
     send_buf.write(header).write(body, header.body_size);
     this->post_send(send_buf);
 }
 
 void SendRecvSocket::recv_header(MessageHeader* header) {
-
     this->msg_buf = this->get_recv_buf();
     this->msg_buf.read(header);
 }
@@ -200,3 +194,5 @@ void SendRecvSocket::send_close() {
     struct ibv_wc close_wc;
     this->poll_send_cq(1, &close_wc);
 }
+
+std::shared_ptr<spdlog::logger> SendRecvSocket::class_logger = spdlog::stdout_logger_mt("SendRecvSocket", true);

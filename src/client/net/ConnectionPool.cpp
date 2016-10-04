@@ -38,8 +38,7 @@ void ConnectionPool::clear_access_coms() {
     this->access_coms.clear();
 }
 
-void ConnectionPool::close_all() {
-    
+void ConnectionPool::close_all() {    
     for (auto& com : this->connections | boost::adaptors::map_values) {
 	com->send_close();
 	delete com;

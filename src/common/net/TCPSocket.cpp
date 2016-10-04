@@ -1,8 +1,6 @@
 #include "TCPSocket.h"
 
 
-std::shared_ptr<spdlog::logger> TCPSocket::class_logger = spdlog::stdout_logger_mt("TCPSocket", true);
-
 TCPSocket::TCPSocket(int sock) {
     this->sock = sock;
     this->logger = spdlog::stdout_logger_mt("TCPSocket-" + std::to_string(sock), true);
@@ -57,7 +55,6 @@ TCPSocket* TCPSocket::connect(const HostAndPort& hp) {
 }
 
 void TCPSocket::send(void* buf, size_t count) const {
-    
     if (write(this->sock, buf, count) < 0) {
         this->logger->error("write: {}", strerror(errno));
 	exit(EXIT_FAILURE);
@@ -65,7 +62,6 @@ void TCPSocket::send(void* buf, size_t count) const {
 }
 
 void TCPSocket::recv(void* buf, size_t count) const {
-
     if (read(this->sock, buf, count) < 0) {
         this->logger->error("read: {}", strerror(errno));
 	exit(EXIT_FAILURE);
@@ -82,7 +78,6 @@ void TCPSocket::recv_header(MessageHeader* header) {
 }
 
 char* TCPSocket::get_body(size_t body_size) {
-
     recv(this->msg_buf.addr, body_size);
     return this->msg_buf.addr;
 }
@@ -94,3 +89,5 @@ void TCPSocket::clear_msg_buf() {
 void TCPSocket::send_close() {
     Communicator::send(MessageType::CLOSE);
 }
+
+std::shared_ptr<spdlog::logger> TCPSocket::class_logger = spdlog::stdout_logger_mt("TCPSocket", true);

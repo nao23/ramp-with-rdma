@@ -1,8 +1,6 @@
 #include "RDMAWriteSocket.h"
 
 
-std::shared_ptr<spdlog::logger> RDMAWriteSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteSocket", true);
-
 RDMAWriteSocket::RDMAWriteSocket(struct rdma_cm_id* client_id) : SendRecvSocket(client_id) {
     
     this->write_mr = NULL;
@@ -165,7 +163,6 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 }
 
 void RDMAWriteSocket::send_msg(MessageHeader header, char* body) {
-
     Buffer send_buf = this->get_send_buf();
     int is_arrived = 0xffffffff;
     send_buf.write(header).write(body, header.body_size).write(is_arrived);
@@ -221,3 +218,5 @@ void RDMAWriteSocket::send_close() {
     struct ibv_wc close_wc;
     this->poll_send_cq(1, &close_wc);
 }
+
+std::shared_ptr<spdlog::logger> RDMAWriteSocket::class_logger = spdlog::stdout_logger_mt("RDMAWriteSocket", true);

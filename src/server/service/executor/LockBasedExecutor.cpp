@@ -72,7 +72,6 @@ void LockBasedExecutor::get(const Key& key) {
 }
 
 void LockBasedExecutor::release_locks() {
-
     this->lock_manager->unlock(this->access_keys);
     this->access_keys.clear();
     this->com->send(MessageType::DONE);
