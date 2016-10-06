@@ -27,8 +27,10 @@ The prototype also supports several different communication methods which are as
 ## Run
 ### Server
 `./server -t TRX_TYPE -c COM_TYPE`
+
 TRX_TYPE and COM_TYPE are the parameter for specifying transaction algorithm and communication method respectively.
 
 ### Client
 `./client -t TRX_TYPE -c COM_TYPE -w WRITE_TRX_NUM -r READ_TRX_NUM`
+
 WRITE_TRX_NUM and READ_TRX_NUM are the parameter for specifying the number of write transaction and read transaction respectively.
