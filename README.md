@@ -5,6 +5,7 @@ The prototype contains several different implementations of distributed transact
 - Three Locking Algorithm
 - No concurrency control
 - RAMP-Fast with RDMA (Our proposal)
+
 The prototype also contains several different implementations of communication methods which are as follows.
 - TCP/IP over Ethernet
 - IP over InfiniBand
@@ -21,4 +22,4 @@ The prototype also contains several different implementations of communication m
 - RDMA Communicaton Manager
 
 ## Build
-'make -j8 all'
+`make -j8 all`
