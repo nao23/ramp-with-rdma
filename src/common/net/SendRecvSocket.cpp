@@ -82,7 +82,6 @@ void SendRecvSocket::setup_verbs_buf() {
 int SendRecvSocket::poll_send_cq(int num_entries, struct ibv_wc* wc) {
 
     int ret;
-    
     while (!(ret = ibv_poll_cq(this->client_id->send_cq, num_entries, wc)));
     if (ret < 0) {
         this->logger->error("ibv_poll_cq: {}", strerror(errno));
@@ -141,8 +140,7 @@ Buffer SendRecvSocket::get_recv_buf() {
     return Buffer(reinterpret_cast<char*>(wc.wr_id), wc.byte_len);
 }
 
-void SendRecvSocket::post_recv(const Buffer& buf) {
-    
+void SendRecvSocket::post_recv(const Buffer& buf) {   
     if (rdma_post_recv(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr) < 0) {
         this->logger->error("rdma_post_recv: {}", strerror(errno));
 	rdma_dereg_mr(this->verbs_mr);
