@@ -6,13 +6,13 @@ The prototype contains several different implementations of distributed transact
 - No concurrency control
 - RAMP-Fast with RDMA (Our proposal)
 
-The prototype also contains several different implementations of communication methods which are as follows.
+The prototype also supports several different communication methods which are as follows.
 - TCP/IP over Ethernet
 - IP over InfiniBand
 - Send/Recv Verbs
-- RDMA Write
+- RDMA Write (Our proposal)
 - RDMA Write with Immediate 
-- RDMA Read
+- RDMA Read (Our proposal)
 
 ## Requirements
 - GCC 4.9.3
@@ -23,3 +23,10 @@ The prototype also contains several different implementations of communication m
 
 ## Build
 `make -j8 all`
+
+## Run
+### Server
+`./server -t TRX_TYPE -c COM_TYPE`
+
+### Client
+`./client -t TRX_TYPE -c COM_TYPE -w WRITE_TRX_NUM -r READ_TRX_NUM`
