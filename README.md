@@ -2,7 +2,7 @@
 This repository contains the prototype distributed in-memory key-value store evaluated in our paper. 
 The prototype contains several different implementations of distributed transactions which are as follows.
 - RAMP-Fast
-- Three Locking Algorithm
+- Three locking algorithms
 - No concurrency control
 - RAMP-Fast with RDMA (Our proposal)
 
@@ -24,13 +24,30 @@ The prototype also supports several different communication methods which are as
 ## Build
 `make -j8 all`
 
+## Setting
+Edit `server_lists/tcp` and `server_lists/ib` for specifying server's hostname and port.
+
 ## Run
 ### Server
-`./server -t TRX_TYPE -c COM_TYPE`
+```
+$ ./server -t TRX_TYPE -c COM_TYPE
+```
+TRX_TYPE is the parameter for specifying transaction algorithms. Supporting parameters are as follows.
+- ramp_f (RAMP-Fast)
+- rr, rc, ru (Locking algorithms)
+- no_cc (No concurrency control)
+- ac_ramp_f (RAMP-Fast with RDMA)
 
-TRX_TYPE and COM_TYPE are the parameter for specifying transaction algorithm and communication method respectively.
+COM_TYPE is the parameter for specifying communication method. Supporting parameters are as follows.
+- tcp (TCP/IP over Ethernet)
+- ipoib (IP over InfiniBand)
+- send_recv (Send/Recv Verbs)
+- rdma_write (RDMA Write)
+- rdma_write_imm (RDMA Write with Immediate)
 
 ### Client
-`./client -t TRX_TYPE -c COM_TYPE -w WRITE_TRX_NUM -r READ_TRX_NUM`
+```
+$ ./client -t TRX_TYPE -c COM_TYPE -w WRITE_TRX_NUM -r READ_TRX_NUM
+```
 
 WRITE_TRX_NUM and READ_TRX_NUM are the parameter for specifying the number of write transaction and read transaction respectively.
