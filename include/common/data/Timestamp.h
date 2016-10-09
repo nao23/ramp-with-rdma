@@ -29,13 +29,10 @@ public:
 namespace tbb {
     template<>
     struct tbb_hash<Timestamp> {
-	tbb_hash() {}
 	size_t operator()(const Timestamp& ts) const {
-
 	    size_t seed = 0;
 	    boost::hash_combine(seed, ts.sec);
-	    boost::hash_combine(seed, ts.usec);
-
+	    boost::hash_combine(seed, ts.usec);	    
 	    return seed;
 	}
     };

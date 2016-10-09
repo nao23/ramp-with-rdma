@@ -13,6 +13,7 @@ void RAMPFastHandler::put_all() {
     tbb::parallel_for_each(this->trx->write_set,
     [&](const std::pair<Key, std::map<Field, Value>>& w) {
 	Key key = w.first;
+	this->logger->debug("Key: {}", key);
 	Communicator* com = this->cp.get(key);
 	com->mtx.lock();
 	com->send(MessageType::PREPARE, Item(key, w.second, ts, this->trx->access_keys));

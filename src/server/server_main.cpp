@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     // Create a multithreaded color logger
     std::shared_ptr<spdlog::logger> logger = spdlog::stdout_logger_mt("main", true);
     // Set global log level to info
-    spdlog::set_level(spdlog::level::info); 
+    spdlog::set_level(spdlog::level::debug); 
     
     // Create a parser, setup and run
     cmdline::parser parser;
@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
 	logger->error("Unkown communication type");
 	return EXIT_FAILURE;
     }
+
     
     Server server(acc);
     server.start();

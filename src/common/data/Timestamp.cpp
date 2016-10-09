@@ -2,7 +2,7 @@
 
 
 bool Timestamp::operator == (const Timestamp& other) const {
-    return (this->sec == other.sec) && (this->usec == other.sec);
+    return (this->sec == other.sec) && (this->usec == other.usec);
 }
 
 bool Timestamp::operator > (const Timestamp& other) const {

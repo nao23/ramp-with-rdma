@@ -47,7 +47,6 @@ RDMAWriteImmSocket* RDMAWriteImmSocket::connect(const HostAndPort& hp) {
 void RDMAWriteImmSocket::post_write_imm(const Buffer& buf, const RemoteKeyAndAddr& rka) {
     if (rdma_post_write_imm(this->client_id, buf.addr, buf.addr, buf.size, this->verbs_mr, 0, rka.remote_addr, rka.rkey) < 0) {
 	this->logger->error("rdma_post_write_imm: {}", strerror(errno));
-	this->send_bufs.push_front(buf);
         exit(EXIT_FAILURE);
     }
 }

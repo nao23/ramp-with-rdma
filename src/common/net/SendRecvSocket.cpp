@@ -3,7 +3,7 @@
 
 SendRecvSocket::SendRecvSocket(struct rdma_cm_id* client_id) : send_bufs(PACKET_WINDOW_SIZE) {
     this->client_id = client_id;
-    this->logger = spdlog::stdout_logger_mt("SendRecvSocket-" + std::to_string(client_id->port_num), true);
+    this->logger = spdlog::stdout_logger_mt("SendRecvSocket-" + std::to_string(client_id->qp->qp_num), true);
     this->verbs_mr = NULL;
     setup_verbs_buf();
 }
