@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stack>
 #include "spdlog/spdlog.h"
 #include "Config.h"
 #include "Acceptor.h"
