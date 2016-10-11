@@ -5,8 +5,7 @@ bool Timestamp::operator == (const Timestamp& other) const {
     return (this->sec == other.sec) && (this->usec == other.usec);
 }
 
-bool Timestamp::operator > (const Timestamp& other) const {
-    
+bool Timestamp::operator > (const Timestamp& other) const {    
     if (this->sec == other.sec) {
         return (this->usec > other.usec);
     } else {
@@ -15,7 +14,6 @@ bool Timestamp::operator > (const Timestamp& other) const {
 }
 
 bool Timestamp::operator < (const Timestamp& other) const {
-    
     if (this->sec == other.sec) {
         return (this->usec < other.usec);
     } else {
@@ -32,10 +30,10 @@ std::string Timestamp::to_str() const {
 }
 
 Timestamp Timestamp::now() {
-
+    
     struct timeval time;
     gettimeofday(&time, NULL);
-
+    
     return Timestamp(time);
 }
 
