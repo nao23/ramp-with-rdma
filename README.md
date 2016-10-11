@@ -1,18 +1,20 @@
 # ramp-with-rdma
-This repository contains the prototype distributed in-memory key-value store evaluated in our paper. 
-The prototype contains several different implementations of distributed transactions which are as follows.
+This repository contains the prototype distributed in-memory key-value store evaluated in our [paper](http://id.nii.ac.jp/1001/00161818/). 
+The prototype contains several different implementations of distributed transactions and communication methods which are as follows.
+
+Distributed transactions:
 - RAMP-Fast
 - Three locking algorithms
 - No concurrency control
 - RAMP-Fast with RDMA (Our proposal)
 
-The prototype also supports several different communication methods which are as follows.
+Communication methods:
 - TCP/IP over Ethernet
 - IP over InfiniBand
 - Send/Recv Verbs
-- RDMA Write (Our proposal)
+- RDMA Write 
 - RDMA Write with Immediate 
-- RDMA Read (Our proposal)
+- RDMA Read
 
 ## Requirements
 - GCC 4.9.3
@@ -24,7 +26,7 @@ The prototype also supports several different communication methods which are as
 ## Build
 `make -j8 all`
 
-## Setting
+## Setup
 Edit `server_lists/tcp` and `server_lists/ib` for specifying server's hostname and port.
 
 ## Run
