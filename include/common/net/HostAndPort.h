@@ -22,13 +22,10 @@ public:
 namespace tbb {
     template<>
     struct tbb_hash<HostAndPort> {
-	tbb_hash() {}
 	size_t operator()(const HostAndPort& hp) const {
-	    
 	    size_t seed = 0;
 	    boost::hash_combine(seed, hp.hostname);
 	    boost::hash_combine(seed, hp.port_str);
-
 	    return seed;
 	}
     };

@@ -7,6 +7,5 @@ HostAndPort::HostAndPort(char* hostname, char* port_str) {
 }
 
 bool HostAndPort::operator == (const HostAndPort& other) const {
-    return (strcmp(this->hostname, other.hostname) == 0) && 
-	   (strcmp(this->port_str, other.port_str) == 0);
+    return (strcmp(this->hostname, other.hostname) == 0) && (strcmp(this->port_str, other.port_str) == 0);
 }
