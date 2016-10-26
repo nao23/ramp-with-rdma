@@ -59,8 +59,8 @@ Item Table::get_item_by_ver(const Key& key, const Timestamp& ts) const {
 	    }
 	}
     } catch (std::out_of_range& e) {
-	this->logger->error(e.what());
-    }    
+	this->logger->debug(e.what());
+    } 
 
     return Item();
 }
