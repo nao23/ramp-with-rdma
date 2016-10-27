@@ -13,8 +13,8 @@ Buffer Buffer::allocate(size_t size) {
     return Buffer(addr, size);
 }
 
-Buffer& Buffer::write(void* src, size_t count) {    
-
+Buffer& Buffer::append(void* src, size_t count) {    
+    
     if (this->addr + this->size - this->write_pos < count) { // Segmentation fault
 	class_logger->error("Buffer::write(): Buffer has no space for new data");
 	exit(EXIT_FAILURE);

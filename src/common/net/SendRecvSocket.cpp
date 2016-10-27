@@ -153,7 +153,7 @@ void SendRecvSocket::post_recv(const Buffer& buf) {
 
 void SendRecvSocket::send_msg(MessageHeader header, char* body) {
     Buffer send_buf = this->get_send_buf();
-    send_buf.write(header).write(body, header.body_size);
+    send_buf.append(header).append(body, header.body_size);
     this->post_send(send_buf);
 }
 
@@ -185,7 +185,7 @@ void SendRecvSocket::send_close() {
     
     // send close msg
     MessageHeader header(MessageType::CLOSE, 0);
-    send_buf.write(header);
+    send_buf.append(header);
     this->post_send(send_buf);
 
     // check send op is completed

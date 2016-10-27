@@ -14,19 +14,19 @@ private:
     static std::shared_ptr<spdlog::logger> class_logger;  // for this class
     char* write_pos;
     char* read_pos;
-    
+
 public:
     char* addr;
-    size_t size;
+    size_t size;    
 
     Buffer() : write_pos(NULL), read_pos(NULL), addr(NULL) {}
     Buffer(char* addr, size_t size) : write_pos(NULL), read_pos(NULL), addr(addr), size(size) {}
 
     static Buffer allocate(size_t size);
 
-    Buffer& write(void* src, size_t count);
-    template<class T> Buffer& write(T src) {
-	return write(&src, sizeof(T));
+    Buffer& append(void* src, size_t count);
+    template<class T> Buffer& append(T src) {
+	return append(&src, sizeof(T));
     }
     
     Buffer& read(void* dst, size_t count);
