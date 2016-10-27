@@ -3,7 +3,7 @@
 #include "spdlog/spdlog.h"
 #include "Containers.h"
 #include "Item.h"
-#include "CommittedItemsCache.h"
+#include "CommittedItems.h"
 
 
 class Table {
@@ -14,7 +14,7 @@ private:
 public:
     ConcurrentMap<Timestamp, ConcurrentVector<Item>> items;
     ConcurrentMap<Key, Timestamp> latest_commit;
-    CommittedItemsCache committed_items;
+    CommittedItems committed_items;
 
     Table();
     void prepare(const Item& item);

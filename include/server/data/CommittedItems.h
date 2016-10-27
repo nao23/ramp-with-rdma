@@ -29,14 +29,15 @@ public:
 };
 
 
-class CommittedItemsCache : public Buffer {
+class CommittedItems : public Buffer {
 
 private:
+    std::shared_ptr<spdlog::logger> logger;
     ConcurrentMap<Key, CacheEntry*> entries;
     ConcurrentQueue<CacheEntry*> unused_entries;
 
 public:
-    CommittedItemsCache();
+    CommittedItems();
   
     void invalidate(const Key& key);
     void update(const Item& item);

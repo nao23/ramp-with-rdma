@@ -1,4 +1,4 @@
-#include "CommittedItemsCache.h"
+#include "CommittedItems.h"
 
 
 void CacheEntry::invalidate() {
@@ -22,14 +22,16 @@ void CacheEntry::update(const Item& item) {
     memcpy(this->addr + sizeof(int), &header, sizeof(MessageHeader));
     memcpy(this->addr + sizeof(int) + sizeof(MessageHeader), this->sbuf.data(), this->sbuf.size());
     memcpy(this->addr + sizeof(int) + sizeof(MessageHeader) + this->sbuf.size(), &is_arrived, sizeof(int));
-
-    memcpy(this->addr, &is_invalid, sizeof(int));
+    
+    memcpy(this->addr, &is_invalid, sizeof(int)); // Validate
 
     this->sbuf.clear();
 }
 
 
-CommittedItemsCache::CommittedItemsCache() {
+CommittedItems::CommittedItems() {
+
+    this->logger = spdlog::stdout_logger_mt("CommittedItemsCache", true);
 
     if (posix_memalign((void**)&this->addr, getpagesize(), CACHE_SIZE) != 0) {
 	perror("posix_memalign");
@@ -44,7 +46,7 @@ CommittedItemsCache::CommittedItemsCache() {
     }
 }
 
-void CommittedItemsCache::invalidate(const Key& key) {
+void CommittedItems::invalidate(const Key& key) {
 
     if (this->entries.find(key) == this->entries.end()) {
 	this->unused_entries.try_pop(this->entries[key]);
@@ -53,7 +55,7 @@ void CommittedItemsCache::invalidate(const Key& key) {
     }
 }
 
-void CommittedItemsCache::update(const Item& item) {
+void CommittedItems::update(const Item& item) {
     
     try {
 	this->entries.at(item.key)->update(item);
@@ -62,7 +64,7 @@ void CommittedItemsCache::update(const Item& item) {
     }
 }
 
-char* CommittedItemsCache::get_item_addr(const Key& key) {
+char* CommittedItems::get_item_addr(const Key& key) {
 
     if (this->entries.find(key) == this->entries.end()) {
 	CacheEntry* entry;
