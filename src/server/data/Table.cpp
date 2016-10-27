@@ -39,16 +39,6 @@ void Table::put(const Item& item) {
     commit(item.key, item.ts);
 }
 
-Item Table::get(const Key& key) {
-    this->logger->debug("get item for key: {}", key);
-    return get_latest_item(key);
-}
-
-Item Table::get_latest_item(const Key& key) { 
-    this->logger->debug("get latest item for key: {}" , key);
-    return get_item_by_ver(key, this->latest_commit[key]);
-}
-
 Item Table::get_item_by_ver(const Key& key, const Timestamp& ts) const {
 
     this->logger->debug("get item for key: {}, ts: {}", key, ts.to_str());

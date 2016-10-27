@@ -21,7 +21,11 @@ public:
     void commit(const Timestamp& ts_c);
     void commit(const Key& key, const Timestamp& ts_c);
     void put(const Item& item);
-    Item get(const Key& key);
-    Item get_latest_item(const Key& key);
+    inline Item get(const Key& key) {
+	return get_latest_item(key);
+    }
+    inline Item get_latest_item(const Key& key) {
+	return get_item_by_ver(key, this->latest_commit[key]);	
+    }
     Item get_item_by_ver(const Key& key, const Timestamp& ts_req) const;
 };
