@@ -5,18 +5,22 @@
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
+#include "spdlog/spdlog.h"
 
 
 class Buffer {
 
+private:
+    static std::shared_ptr<spdlog::logger> class_logger;  // for this class
+    char* write_pos;
+    char* read_pos;
+    
 public:
     char* addr;
     size_t size;
-    char* write_pos;
-    char* read_pos;
 
-    Buffer() : addr(NULL), size(0), write_pos(NULL), read_pos(NULL) {}
-    Buffer(char* addr, size_t size) : addr(addr), size(size), write_pos(addr), read_pos(addr) {}
+    Buffer() : write_pos(NULL), read_pos(NULL), addr(NULL) {}
+    Buffer(char* addr, size_t size) : write_pos(NULL), read_pos(NULL), addr(addr), size(size) {}
 
     static Buffer allocate(size_t size);
 
