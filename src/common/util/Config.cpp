@@ -29,7 +29,7 @@ void Config::read_server_list() {
         exit(1);
     }
 
-    char hostname[64];
+    char hostname[MAXHOSTNAMELEN];
     char port_str[8];
 
     while (fscanf(fp, "%s %s\n", hostname, port_str) != EOF)

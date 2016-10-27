@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <string.h>
+#include <sys/param.h>
 #include <tbb/tbb.h>
 #include <boost/functional/hash.hpp>
 
@@ -9,7 +10,7 @@
 class HostAndPort {
 
 public:
-    char hostname[64];
+    char hostname[MAXHOSTNAMELEN];
     char port_str[8];
     
     HostAndPort() = default;
