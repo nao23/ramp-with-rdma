@@ -1,6 +1,18 @@
 #include "Buffer.h"
 
 
+Buffer& Buffer::update(size_t offset, void* src, size_t len) {
+
+    if (this->addr + this->size - (this->addr + offset) < len) { // Segmentation fault
+	class_logger->error("Buffer::update(): Buffer has no space for new data");
+	exit(EXIT_FAILURE);
+    }
+    // Update to new data
+    memcpy(this->addr + offset, src, len);
+    // Return reference of this object for method chaining 
+    return *this;
+}
+
 Buffer Buffer::allocate(size_t size) {
 
     char* addr;
@@ -13,29 +25,29 @@ Buffer Buffer::allocate(size_t size) {
     return Buffer(addr, size);
 }
 
-Buffer& Buffer::append(void* src, size_t count) {    
+Buffer& Buffer::append(void* src, size_t len) {    
     
-    if (this->addr + this->size - this->write_pos < count) { // Segmentation fault
-	class_logger->error("Buffer::write(): Buffer has no space for new data");
+    if (this->addr + this->size - this->write_pos < len) { // Segmentation fault
+	class_logger->error("Buffer::append(): Buffer has no space for new data");
 	exit(EXIT_FAILURE);
     }    
     // Append new data to write_pos and increment write_pos
-    memcpy(this->write_pos, src, count);
-    this->write_pos += count;
-    // Return reference of this object for realizing method chaining 
+    memcpy(this->write_pos, src, len);
+    this->write_pos += len;
+    // Return reference of this object for method chaining 
     return *this;
 }
 
-Buffer& Buffer::read(void* dst, size_t count) {
+Buffer& Buffer::read(void* dst, size_t len) {
 
-    if (this->addr + this->size - this->read_pos < count) { // Segmentation fault
+    if (this->addr + this->size - this->read_pos < len) { // Segmentation fault
 	class_logger->error("Buffer::read(): You are about to read out of this buffer area");
 	exit(EXIT_FAILURE);
     }
     // Read data from read_pos and increment read_pos
-    memcpy(dst, this->read_pos, count);
-    this->read_pos += count;
-    // Return reference of this object for realizing method chaining 
+    memcpy(dst, this->read_pos, len);
+    this->read_pos += len;
+    // Return reference of this object for method chaining 
     return *this;
 }
 
