@@ -109,7 +109,6 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 
     this->post_read(read_buf, rka);
     
-    printf("read invalid flag + MessageHeader..."); fflush(stdout);
     // read invalid flag + MessageHeader
     int is_invalid;
     MessageHeader header;
@@ -120,13 +119,11 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 	    break;
 	}
     }
-    printf("done\n"); fflush(stdout);
 
     if (is_invalid != 0) {
 	return -1;
     }
     
-    printf("read body + is_arrived flag..."); fflush(stdout);
     // read body + is_arrived flag
     is_arrived = (int*)(read_buf.addr + sizeof(int) + sizeof(MessageHeader) + header.body_size);
     while (true) {
@@ -134,7 +131,6 @@ int RDMAWriteSocket::read(Item* item, RemoteKeyAndAddr rka) {
 	    break;
 	}
     }
-    printf("done\n"); fflush(stdout);
 
     char* body = read_buf.addr + sizeof(int) + sizeof(MessageHeader);
 

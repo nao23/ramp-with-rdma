@@ -27,6 +27,7 @@ SendRecvSocket* SendRecvSocket::connect(const HostAndPort& hp) {
     char* hostname = const_cast<char*>(hp.hostname);
     char* port_str = const_cast<char*>(hp.port_str);
     
+    printf("hostname:%s\n", hostname); fflush(stdout);
     if (rdma_getaddrinfo(hostname, port_str, &hints, &res) < 0) {
         class_logger->error("rdma_getaddrinfo: {}", strerror(errno));
         exit(EXIT_FAILURE);
