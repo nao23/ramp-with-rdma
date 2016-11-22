@@ -14,7 +14,7 @@ CLIENT_OBJS = $(addprefix $(OBJDIR)/client/, $(notdir $(CLIENT_SRCS:.cpp=.o)))
 LIB_OBJS    = $(addprefix $(OBJDIR)/lib/, $(notdir $(LIB_SRCS:.cpp=.o)))
 
 INC_FLAGS = $(addprefix -I , $(INC_DIRS))
-CXXFLAGS = -Wall -O2 -std=c++11 $(INC_FLAGS)
+CXXFLAGS = -g -Wall -O2 -std=c++11 $(INC_FLAGS)
 LDFLAGS = -ltbb -lrdmacm -libverbs
 
 
