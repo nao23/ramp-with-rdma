@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
     // Create a multithreaded color logger
     std::shared_ptr<spdlog::logger> logger = spdlog::stdout_logger_mt("main", true);
     // Set global log level to info
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::info); // TODO: can be set dynamically
 
     // Create a parser, setup and run
     cmdline::parser parser;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     }
     
     config.data_num = parser.get<int>("data_num");
-    config.worker_num = 1;
+    config.worker_num = 8;
     config.trx_len = parser.get<int>("trx_len");
     config.write_trx_num = parser.get<int>("write_trx_num");
     config.read_trx_num = parser.get<int>("read_trx_num");

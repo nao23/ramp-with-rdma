@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     // Create a multithreaded color logger
     std::shared_ptr<spdlog::logger> logger = spdlog::stdout_logger_mt("main", true);
     // Set global log level to info
-    spdlog::set_level(spdlog::level::debug); 
+    spdlog::set_level(spdlog::level::info); // TODO: can be set dynamically
     
     // Create a parser, setup and run
     cmdline::parser parser;
