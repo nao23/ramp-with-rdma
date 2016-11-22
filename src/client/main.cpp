@@ -25,12 +25,8 @@ int main(int argc, char *argv[]) {
 
     // Get trx type from parser and set it to config object    
     std::string trx_type = parser.get<std::string>("trx_type");
-    if (trx_type == "rr" ) {
-        config.trx_type = TrxType::LOCK_BASED;
-    } else if (trx_type == "rc") {
-        config.trx_type = TrxType::LOCK_BASED;
-    } else if (trx_type == "ru") {
-        config.trx_type = TrxType::LOCK_BASED;
+    if (trx_type == "2pl" ) {
+        config.trx_type = TrxType::TWO_PHASE_LOCKING;
     } else if (trx_type == "no_cc") {
         config.trx_type = TrxType::NO_CONCURRENCY_CONTROL;
     } else if (trx_type == "ramp_f") {

@@ -7,7 +7,6 @@
 #include "ComType.h"
 #include "TrxType.h"
 #include "HostAndPort.h"
-#include "LockDuration.h"
 
 
 class Config {
@@ -31,9 +30,6 @@ public:
     char* cache_addr;
     size_t cache_size;
     uint32_t cache_rkey;
-
-    LockDuration write_duration;
-    LockDuration read_duration;
 
     static Config& get_config();
     void read_server_list();

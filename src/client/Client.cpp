@@ -11,7 +11,7 @@ Client::Client() {
     for (int i = 0; i < config.worker_num; ++i) {
 	
 	TrxHandler* trx_handler;
-	if (config.trx_type == TrxType::LOCK_BASED) {
+	if (config.trx_type == TrxType::TWO_PHASE_LOCKING) {
 	    trx_handler = new LockBasedHandler(i);
 	} else if (config.trx_type == TrxType::NO_CONCURRENCY_CONTROL) { 
 	    trx_handler = new NoCCHandler(i);

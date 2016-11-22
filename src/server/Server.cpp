@@ -25,7 +25,7 @@ void Server::start() {
 
 	TrxExecutor* trx_executor;
 				
-	if (config.trx_type == TrxType::LOCK_BASED) {
+	if (config.trx_type == TrxType::TWO_PHASE_LOCKING) {
 	    trx_executor = new LockBasedExecutor(id++, this->acc->accept(), &this->table, &this->lock_manager);   
 	} else if (config.trx_type == TrxType::NO_CONCURRENCY_CONTROL) {
 	    trx_executor = new NoCCExecutor(id++, this->acc->accept(), &this->table);
