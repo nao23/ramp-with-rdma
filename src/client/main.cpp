@@ -25,13 +25,13 @@ int main(int argc, char *argv[]) {
 
     // Get trx type from parser and set it to config object    
     std::string trx_type = parser.get<std::string>("trx_type");
-    if (trx_type == "2pl" ) {
+    if (trx_type == "2PL" ) {
         config.trx_type = TrxType::TWO_PHASE_LOCKING;
-    } else if (trx_type == "no_cc") {
+    } else if (trx_type == "NO_CC") {
         config.trx_type = TrxType::NO_CONCURRENCY_CONTROL;
-    } else if (trx_type == "ramp_f") {
+    } else if (trx_type == "RAMP_F") {
         config.trx_type = TrxType::RAMP_FAST;
-    } else if (trx_type == "ac_ramp_f") {
+    } else if (trx_type == "AC_RAMP_F") {
         config.trx_type = TrxType::AC_RAMP_FAST;
     } else {
         logger->error("Unkown trx type");
@@ -40,15 +40,15 @@ int main(int argc, char *argv[]) {
 
     // Get com type from parser and set it to config object
     std::string com_type = parser.get<std::string>("com_type");
-    if (com_type == "tcp") {
+    if (com_type == "TCP") {
 	config.com_type = ComType::TCP;
-    } else if (com_type == "ipoib") { 
+    } else if (com_type == "IPOIB") { 
 	config.com_type = ComType::IPoIB;
-    } else if (com_type == "send_recv") {
+    } else if (com_type == "SEND_RECV") {
 	config.com_type = ComType::SEND_RECV;
-    } else if (com_type == "rdma_write") { 
+    } else if (com_type == "RDMA_WRITE") { 
 	config.com_type = ComType::RDMA_WRITE;
-    } else if (com_type == "rdma_write_imm") { 
+    } else if (com_type == "RDMA_WRITE_IMM") { 
 	config.com_type = ComType::RDMA_WRITE_IMM;
     } else {
         logger->error("Unkown com type");
