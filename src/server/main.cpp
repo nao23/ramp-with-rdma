@@ -15,15 +15,26 @@ int main(int argc, char *argv[]) {
     
     // Create a multithreaded color logger
     std::shared_ptr<spdlog::logger> logger = spdlog::stdout_logger_mt("main", true);
-    // Set global log level to info
-    spdlog::set_level(spdlog::level::info); // TODO: can be set dynamically
     
     // Create a parser, setup and run
     cmdline::parser parser;
+    parser.add<std::string>("log_level", 'l', "log level", false, "info");
     parser.add<std::string>("trx_type", 't', "transaction type", true, "");
     parser.add<std::string>("com_type", 'c', "communication type", true, "");
     parser.add<std::string>("port_num", 'p', "port number", false, "50000");
     parser.parse_check(argc, argv);
+
+    // Set global log level
+    std::string log_level = parser.get<std::string>("log_level");
+    if (log_level == "info") {
+	spdlog::set_level(spdlog::level::info);
+    } else if (log_level == "debug") {
+	spdlog::set_level(spdlog::level::debug);
+    } else {
+	spdlog::set_level(spdlog::level::info);
+	logger->error("Unkown log level");
+	return EXIT_FAILURE;
+    }
     
     Config& config = Config::get_config();
 
