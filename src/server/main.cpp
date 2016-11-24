@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     cmdline::parser parser;
     parser.add<std::string>("trx_type", 't', "transaction type", true, "");
     parser.add<std::string>("com_type", 'c', "communication type", true, "");
+    parser.add<std::string>("port_num", 'p', "port number", false, "50000");
     parser.parse_check(argc, argv);
     
     Config& config = Config::get_config();
@@ -42,25 +43,24 @@ int main(int argc, char *argv[]) {
     }
     
     Acceptor* acc;
-    char port_str[] = "50000";
     
     // Get com type from parser and set it to config object
     std::string com_type = parser.get<std::string>("com_type");
     if (com_type == "TCP") {
 	config.com_type = ComType::TCP;
-	acc = new TCPServerSocket(port_str);
+	acc = new TCPServerSocket(parser.get<std::string>("port_num"));
     } else if (com_type == "IPOIB") { 
 	config.com_type = ComType::IPoIB;
-	acc = new TCPServerSocket(port_str);
+	acc = new TCPServerSocket(parser.get<std::string>("port_num"));
     } else if (com_type == "SEND_RECV") {
 	config.com_type = ComType::SEND_RECV;
-	acc = new SendRecvServerSocket(port_str);
+	acc = new SendRecvServerSocket(parser.get<std::string>("port_num"));
     } else if (com_type == "RDMA_WRITE") { 
 	config.com_type = ComType::RDMA_WRITE;
-	acc = new RDMAWriteServerSocket(port_str);
+	acc = new RDMAWriteServerSocket(parser.get<std::string>("port_num"));
     } else if (com_type == "RDMA_WRITE_IMM") {
 	config.com_type = ComType::RDMA_WRITE_IMM;
-	acc = new RDMAWriteImmServerSocket(port_str);	
+	acc = new RDMAWriteImmServerSocket(parser.get<std::string>("port_num"));	
     } else { 
 	logger->error("Unkown communication type");
 	return EXIT_FAILURE;

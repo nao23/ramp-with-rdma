@@ -1,7 +1,7 @@
 #include "TCPServerSocket.h"
 
 
-TCPServerSocket::TCPServerSocket(char* port_str) {
+TCPServerSocket::TCPServerSocket(std::string port_str) {
     
     this->logger = spdlog::stdout_logger_mt("TCPServerSocket", true);
     
@@ -12,7 +12,7 @@ TCPServerSocket::TCPServerSocket(char* port_str) {
     hints.ai_socktype = SOCK_STREAM;
     res = NULL;
 
-    if (getaddrinfo(NULL, port_str, &hints, &res) != 0) {
+    if (getaddrinfo(NULL, const_cast<char*>(port_str.c_str()), &hints, &res) != 0) {
 	this->logger->error("getaddrinfo: {}", strerror(errno));
         exit(EXIT_FAILURE);
     }
