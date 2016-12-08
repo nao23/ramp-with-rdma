@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
     parser.add<std::string>("com_type", 'c', "communication type", true, "");
     parser.add<int>("write_trx_num", 'w', "num of write transactions", true, 0);
     parser.add<int>("read_trx_num", 'r', "num of read transactions", true, 0);
-    parser.add<int>("data_num", 'n', "num of data", false, 100);
-    parser.add<int>("trx_len", 'l', "transaction size (operations)", false, 8);
+    parser.add<int>("data_num", 'n', "num of data", false, 1000);
+    parser.add<int>("trx_size", 's', "transaction size (operations)", false, 8);
     parser.add<int>("value_size", 'v', "value size (bytes)", false, 1000);
     parser.parse_check(argc, argv);
 
