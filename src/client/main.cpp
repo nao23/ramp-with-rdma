@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     
     config.data_num = parser.get<int>("data_num");
     config.worker_num = 8;
-    config.trx_len = parser.get<int>("trx_len");
+    config.trx_len = parser.get<int>("trx_size");
     config.write_trx_num = parser.get<int>("write_trx_num");
     config.read_trx_num = parser.get<int>("read_trx_num");
     config.value_size = parser.get<int>("value_size");
