@@ -9,6 +9,7 @@ TCPSocket::TCPSocket(int sock) {
 
 TCPSocket::~TCPSocket() {
     ::close(this->sock);
+    spdlog::drop(this->logger->name());
     this->msg_buf.free();
 }
 

@@ -10,6 +10,7 @@ SendRecvSocket::SendRecvSocket(struct rdma_cm_id* client_id) : send_bufs(PACKET_
 
 SendRecvSocket::~SendRecvSocket() {
     rdma_disconnect(this->client_id);
+    spdlog::drop(this->logger->name());
     rdma_dereg_mr(this->verbs_mr);
     rdma_destroy_ep(this->client_id);
     this->verbs_buf.free();
