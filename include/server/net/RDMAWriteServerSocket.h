@@ -10,7 +10,7 @@ private:
     struct rdma_cm_id* listen_id;
     
 public:
-    RDMAWriteServerSocket(char* port_str);
+    RDMAWriteServerSocket(std::string port_str);
     ~RDMAWriteServerSocket() = default;
     Communicator* accept();
 };

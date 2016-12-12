@@ -1,7 +1,7 @@
 #include "SendRecvServerSocket.h"
 
 
-SendRecvServerSocket::SendRecvServerSocket(char* port_str) {
+SendRecvServerSocket::SendRecvServerSocket(std::string port_str) {
 
     this->logger = spdlog::stdout_logger_mt("SendRecvServerSocket", true);
     
@@ -13,7 +13,7 @@ SendRecvServerSocket::SendRecvServerSocket(char* port_str) {
     hints.ai_port_space = RDMA_PS_TCP;
     res = NULL;
 
-    if (rdma_getaddrinfo(NULL, port_str, &hints, &res) < 0) {
+    if (rdma_getaddrinfo(NULL, const_cast<char*>(port_str.c_str()), &hints, &res) < 0) {
         this->logger->error("rdma_getaddrinfo: {}", strerror(errno));
         exit(EXIT_FAILURE);
     }

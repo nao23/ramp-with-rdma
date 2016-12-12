@@ -2,6 +2,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <string>
 #include "spdlog/spdlog.h"
 #include "Communicator.h"
 

@@ -17,7 +17,7 @@ void Table::commit(const Timestamp& ts_c) {
     try {
 	for (const auto& item : this->items.at(ts_c)) {
 	    if (this->latest_commit[item.key] < ts_c) {
-		this->latest_commit[item.key] = ts_c;
+		this->latest_commit.insert(std::make_pair(item.key, ts_c));
 		this->committed_items.update(item);
 	    }
 	}

@@ -10,7 +10,7 @@ private:
     int sock;
 
 public:
-    TCPServerSocket(char* port_str);
+    TCPServerSocket(std::string port_str);
     ~TCPServerSocket();
     Communicator* accept();
 };

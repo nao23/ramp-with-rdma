@@ -1,12 +1,10 @@
 #include "LockBasedExecutor.h"
 
 
-LockBasedExecutor::LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager) : TrxExecutor(id, com, table) {
+LockBasedExecutor::LockBasedExecutor(int id, Communicator* com, Table* table, LockManager* lock_manager) : 
+TrxExecutor(id, com, table) {
     this->logger = spdlog::stdout_logger_mt("LockBasedExecutor-" + std::to_string(id), true);
     this->lock_manager = lock_manager;
-    Config& config = Config::get_config();
-    this->write_duration = config.write_duration;
-    this->read_duration = config.read_duration;
 }
 
 void LockBasedExecutor::run() {
@@ -41,33 +39,16 @@ void LockBasedExecutor::run() {
 }
 
 void LockBasedExecutor::put(const Item& item) {
-
     this->lock_manager->write_lock(item.key);
     this->table->put(item);
-    
-    if (this->write_duration == LockDuration::SHORT) {
-	this->lock_manager->unlock(item.key);
-    } else if (this->write_duration == LockDuration::LONG) {
-	this->access_keys.insert(item.key);
-    }
-
+    this->access_keys.insert(item.key);
     this->com->send(MessageType::DONE);
 }
 
 void LockBasedExecutor::get(const Key& key) {
-
-    if (this->read_duration != LockDuration::NONE) {
-	this->lock_manager->read_lock(key);
-    }
-    
+    this->lock_manager->read_lock(key);    
     Item item = this->table->get(key);
-
-    if (this->read_duration == LockDuration::SHORT) {
-	this->lock_manager->unlock(key);
-    } else if (this->read_duration == LockDuration::LONG) {
-	this->access_keys.insert(key);
-    }
-
+    this->access_keys.insert(key);
     this->com->send(MessageType::RESULT, item);
 }
 
